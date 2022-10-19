@@ -18,6 +18,7 @@ def get_item(pk: int, q: int = None):
 def get_user_item(pk: int, item: str):
     return {'user': pk, 'item': item}
 
+
 @app.post('/author')
 def create_author(author: Author = Body(..., embed=True)):
     """
@@ -29,17 +30,29 @@ def create_author(author: Author = Body(..., embed=True)):
     }
 
 
-@app.post('/book')
-def create_book(book: Book, author: Author, amount: int = Body(...)):
+@app.post('/book',
+          response_model=Book,
+          # response_model_exclude_unset=True,
+          # response_model_exclude={"pages", "date"},
+          response_model_include={"pages", "date"},
+          )
+def create_book(book: Book,
+                # author: Author,
+                # amount: int = Body(1)
+                ):
     """
     Данные item должны соответствовать модели, описанной в классе Book (pydantic)
     Body позволяет добавить параметр в body запроса, а не в url адрес.
+    response_model_exclude_unset=True Все параметры в схеме, которые определены по умолчанию, исключаются из ответа.
+    response_model_exclude={"pages", "date"} исключает из ответа данные аргументы
+    response_model_include={"title", "writer"} в ответ будут включены ТОЛЬКО эти аргументы
     """
-    return {
-        'book': book,  # заполняем инфу по Book
-        'author': author,  # заполняем инфу по Author
-        'amount': amount,  # аргумент входит в тело запроса, и не учитывается в url
-    }
+    return book
+    #     {
+    #     'book': book,  # заполняем инфу по Book
+    #     'author': author,  # заполняем инфу по Author
+    #     'amount': amount,  # аргумент входит в тело запроса, и не учитывается в url
+    # }
 
 
 @app.get('/book/')
@@ -57,7 +70,7 @@ def get_book(q: str = Query(None, min_length=2, max_length=5, description='Searc
 
 
 @app.get('/book/{pk}')
-def get_single_book(pk: int = Path(..., gt=1, le=20), pages: int = Query(None, gt=10, le=500)):
+def get_single_book(pk: int = Path(..., gt=1, le=20), pages: int = Query(None, gt=1, le=500)):
     """
     gt=1 минмальное значение
     le=20 максимальное значение

@@ -12,9 +12,9 @@ class Genre(BaseModel):
 
 
 class Author(BaseModel):
-    first_name: str = Field(..., max_length=15)  # ограничение введенных символов в 25
+    # first_name: str = Field(..., max_length=15)  # ограничение введенных символов в 25
     last_name: str
-    age: int = Field(..., gt=15, lt=90,
+    age: int = Field(20, gt=15, lt=90,
                      description='Автор должен быть старше 15 и младше 90 лет')  # доп поля для валидирования. 15 < age < 90
 
     # @validator('age')
@@ -36,5 +36,5 @@ class Book(BaseModel):
     duration: str
     date: date
     summary: str
-    genres: List[Genre]
-    pages: int
+    genres: List[Genre] = []  # По умолчанию пуст. К заполнению не обязателен.
+    pages: int = 100
