@@ -18,7 +18,7 @@ def get_item(pk: int, q: int = None):
 def get_user_item(pk: int, item: str):
     return {'user': pk, 'item': item}
 
-
+@app.post('/author')
 def create_author(author: Author = Body(..., embed=True)):
     """
     Создает автора по модели pydantic

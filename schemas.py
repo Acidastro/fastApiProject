@@ -3,7 +3,7 @@
 """
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, Field
 from datetime import date
 
 
@@ -12,9 +12,19 @@ class Genre(BaseModel):
 
 
 class Author(BaseModel):
-    first_name: str
+    first_name: str = Field(..., max_length=15)  # ограничение введенных символов в 25
     last_name: str
-    age: int
+    age: int = Field(..., gt=15, lt=90,
+                     description='Автор должен быть старше 15 и младше 90 лет')  # доп поля для валидирования. 15 < age < 90
+
+    # @validator('age')
+    # def check_age(cls, v):
+    #     """
+    #     Собственный валидатор, проверка значения больше 15
+    #     """
+    #     if v < 15:
+    #         raise ValueError('Автор должен быть старше 15 и младше 90 лет')
+    #     return v
 
 
 class Book(BaseModel):
