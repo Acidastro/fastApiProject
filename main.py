@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query, Path, Body
-from schemas import Book, Author  # Модель валидации
+from schemas import Book, Author, BookOut  # Модель валидации
 
 app = FastAPI()
 
@@ -31,23 +31,26 @@ def create_author(author: Author = Body(..., embed=True)):
 
 
 @app.post('/book',
-          response_model=Book,
+          response_model=BookOut,
           # response_model_exclude_unset=True,
           # response_model_exclude={"pages", "date"},
-          response_model_include={"pages", "date"},
+          # response_model_include={"pages", "date"},
           )
 def create_book(book: Book,
                 # author: Author,
                 # amount: int = Body(1)
                 ):
     """
-    Данные item должны соответствовать модели, описанной в классе Book (pydantic)
+    Данные book должны соответствовать модели, описанной в классе Book (pydantic)
     Body позволяет добавить параметр в body запроса, а не в url адрес.
+    response_model модель которая будет возвращаеться в ответ
     response_model_exclude_unset=True Все параметры в схеме, которые определены по умолчанию, исключаются из ответа.
     response_model_exclude={"pages", "date"} исключает из ответа данные аргументы
     response_model_include={"title", "writer"} в ответ будут включены ТОЛЬКО эти аргументы
     """
-    return book
+    # book = book.dict()
+    # book['id'] = 3
+    return BookOut(**book.dict(), id=3)
     #     {
     #     'book': book,  # заполняем инфу по Book
     #     'author': author,  # заполняем инфу по Author

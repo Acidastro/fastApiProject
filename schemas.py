@@ -38,3 +38,7 @@ class Book(BaseModel):
     summary: str
     genres: List[Genre] = []  # По умолчанию пуст. К заполнению не обязателен.
     pages: int = 100
+
+
+class BookOut(Book):
+    id: int
